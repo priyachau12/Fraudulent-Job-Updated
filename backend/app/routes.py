@@ -17,6 +17,14 @@ users_collection = db.users
 # JWT Secret
 JWT_SECRET = os.environ.get('JWT_SECRET', 'your-secret-key')
 
+@main.route('/', methods=['GET'])
+def health_check():
+    return jsonify({
+        'status': 'ok',
+        'message': 'Backend is running',
+        'timestamp': datetime.utcnow().isoformat()
+    })
+
 def create_token(user):
     payload = {
         'id': str(user['_id']),

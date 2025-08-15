@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>API Connection Test</h1>
+
+    <div class="test-section">
+        <h3>Test 1: Health Check</h3>
+        <button onclick="testHealthCheck()">Test Health Check</button>
+        <div id="health-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Register User</h3>
+        <button onclick="testRegister()">Test Register</button>
+        <div id="register-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Login User</h3>
+        <button onclick="testLogin()">Test Login</button>
+        <div id="login-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 4: CORS Test</h3>
+        <button onclick="testCORS()">Test CORS</button>
+        <div id="cors-result"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://fraudulent-job-updated.onrender.com';
+
+        function displayResult(elementId, success, data) {
+            const element = document.getElementById(elementId);
+            element.className = success ? 'success' : 'error';
+            element.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        async function testHealthCheck() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/`);
+                const data = await response.json();
+                displayResult('health-result', response.ok, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data,
+                    headers: Object.fromEntries(response.headers.entries())
+                });
+            } catch (error) {
+                displayResult('health-result', false, {
+                    error: error.message,
+                    type: error.name
+                });
+            }
+        }
+
+        async function testRegister() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: 'Test User',
+                        email: `test${Date.now()}@test.com`,
+                        password: '123456',
+                        confirmPassword: '123456'
+                    })
+                });
+                const data = await response.json();
+                displayResult('register-result', response.ok, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data,
+                    headers: Object.fromEntries(response.headers.entries())
+                });
+            } catch (error) {
+                displayResult('register-result', false, {
+                    error: error.message,
+                    type: error.name
+                });
+            }
+        }
+
+        async function testLogin() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/login`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'test@test.com',
+                        password: '123456',
+                        isAdminLogin: false
+                    })
+                });
+                const data = await response.json();
+                displayResult('login-result', response.ok, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data,
+                    headers: Object.fromEntries(response.headers.entries())
+                });
+            } catch (error) {
+                displayResult('login-result', false, {
+                    error: error.message,
+                    type: error.name
+                });
+            }
+        }
+
+        async function testCORS() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/me`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                displayResult('cors-result', response.ok, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data,
+                    headers: Object.fromEntries(response.headers.entries())
+                });
+            } catch (error) {
+                displayResult('cors-result', false, {
+                    error: error.message,
+                    type: error.name
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

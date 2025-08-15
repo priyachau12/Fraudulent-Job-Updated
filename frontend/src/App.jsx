@@ -137,10 +137,17 @@ import JobResult from "./components/JobResult";
 import Login from "./Login";
 
 // Automatically pick backend URL based on environment
-const API_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://fraudulent-job-updated.onrender.com" // Render backend URL
-    : "http://localhost:5003"; // Local backend URL
+const API_BASE_URL = (() => {
+  // Check if we're in production (deployed on Render)
+  if (window.location.hostname.includes('onrender.com')) {
+    return "https://fraudulent-job-updated.onrender.com";
+  }
+  // Local development
+  return "http://localhost:5003";
+})();
+
+console.log('App.jsx - API_BASE_URL:', API_BASE_URL);
+console.log('App.jsx - Current hostname:', window.location.hostname);
 
 export default function App() {
   const [theme, setTheme] = useState("light");
