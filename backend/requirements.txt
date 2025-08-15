@@ -8,3 +8,6 @@ gunicorn
 openai
 numpy
 xgboost
+bcrypt
+PyJWT
+pymongo
