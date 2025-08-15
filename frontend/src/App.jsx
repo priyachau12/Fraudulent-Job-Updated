@@ -13,7 +13,7 @@
 // export default function App() {
 //   const [theme, setTheme] = useState("light");
 //   const [user, setUser] = useState(null);
-  
+
 //   useEffect(() => {
 //     if (theme === "dark") {
 //       document.body.classList.add("dark-theme");
@@ -62,7 +62,7 @@
 //               <div className="logo">
 //                 <Link to="/">TRAP</Link>
 //               </div>
-              
+
 //               <div className="nav-links">
 //                 <Link to="/" className="nav-link">
 //                   <span className="nav-text">Home</span>
@@ -83,7 +83,7 @@
 //                   </span>
 //                 </button>
 //               </div>
-              
+
 //               <div className="auth-section">
 //                 <button onClick={handleLogout} className="get-started-button">
 //                   Logout
@@ -94,7 +94,7 @@
 //               </div>
 //             </div>
 //           </nav>
-          
+
 //           <Routes>
 //             <Route path="/" element={<Home user={user} />} />
 //             <Route path="/aboutus" element={<AboutUs />} />
@@ -124,19 +124,9 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect } from "react";
 import AdminPanel from "./components/AdminPanel";
-import { BrowserRouter, Routes, Route, Link, Navigate, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import { FaHome, FaInfoCircle, FaSearch, FaSun, FaMoon } from "react-icons/fa";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import "./styles/App.css";
@@ -146,10 +136,16 @@ import AboutUs from "./AboutUs";
 import JobResult from "./components/JobResult";
 import Login from "./Login";
 
+// Automatically pick backend URL based on environment
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://fraudulent-job-updated.onrender.com" // Render backend URL
+    : "http://localhost:5003"; // Local backend URL
+
 export default function App() {
   const [theme, setTheme] = useState("light");
   const [user, setUser] = useState(null);
-  
+
   useEffect(() => {
     if (theme === "dark") {
       document.body.classList.add("dark-theme");
@@ -161,14 +157,13 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
-    fetch("http://localhost:5003/api/me", {
-      credentials: "include"
+    fetch(`${API_BASE_URL}/api/me`, {
+      credentials: "include",
     })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.user) {
           setUser(data.user);
-          // No need to navigate here - the Routes will handle it
         }
       });
   }, []);
@@ -179,9 +174,9 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:5003/api/logout", {
+      await fetch(`${API_BASE_URL}/api/logout`, {
         method: "POST",
-        credentials: "include"
+        credentials: "include",
       });
       setUser(null);
     } catch (error) {
@@ -189,86 +184,97 @@ export default function App() {
     }
   };
 
-return (
-  <BrowserRouter>
-    {user ? (
-      <>
-        {/* Show navbar only for non-admin users */}
-        {!user.isAdmin && (
-          <nav className="navbar">
-            <div className="navbar-container">
-              <div className="logo">
-                <Link to="/">TRAP</Link>
-              </div>
-              
-              <div className="nav-links">
-                <Link to="/" className="nav-link">
-                  <span className="nav-text">Home</span>
-                  <span className="nav-icon"><FaHome /></span>
-                </Link>
-                <Link to="/aboutus" className="nav-link">
-                  <span className="nav-text">About Us</span>
-                  <span className="nav-icon"><FaInfoCircle /></span>
-                </Link>
-                <Link to="/analyzepost" className="nav-link">
-                  <span className="nav-text">Analyze Post</span>
-                  <span className="nav-icon"><FaSearch /></span>
-                </Link>
-                <button onClick={toggleTheme} className="theme-toggle-btn">
-                  <span className="nav-text">{theme === "light" ? "Dark" : "Light"}</span>
-                  <span className="nav-icon">
-                    {theme === "light" ? <FaMoon /> : <FaSun />}
-                  </span>
-                </button>
-              </div>
-              
-              <div className="auth-section">
-                <button onClick={handleLogout} className="get-started-button">
-                  Logout
-                </button>
-                <div className="user-avatar">
-                  {user?.username?.charAt(0).toUpperCase()}
+  return (
+    <BrowserRouter>
+      {user ? (
+        <>
+          {/* Show navbar only for non-admin users */}
+          {!user.isAdmin && (
+            <nav className="navbar">
+              <div className="navbar-container">
+                <div className="logo">
+                  <Link to="/">TRAP</Link>
+                </div>
+
+                <div className="nav-links">
+                  <Link to="/" className="nav-link">
+                    <span className="nav-text">Home</span>
+                    <span className="nav-icon">
+                      <FaHome />
+                    </span>
+                  </Link>
+                  <Link to="/aboutus" className="nav-link">
+                    <span className="nav-text">About Us</span>
+                    <span className="nav-icon">
+                      <FaInfoCircle />
+                    </span>
+                  </Link>
+                  <Link to="/analyzepost" className="nav-link">
+                    <span className="nav-text">Analyze Post</span>
+                    <span className="nav-icon">
+                      <FaSearch />
+                    </span>
+                  </Link>
+                  <button onClick={toggleTheme} className="theme-toggle-btn">
+                    <span className="nav-text">
+                      {theme === "light" ? "Dark" : "Light"}
+                    </span>
+                    <span className="nav-icon">
+                      {theme === "light" ? <FaMoon /> : <FaSun />}
+                    </span>
+                  </button>
+                </div>
+
+                <div className="auth-section">
+                  <button onClick={handleLogout} className="get-started-button">
+                    Logout
+                  </button>
+                  <div className="user-avatar">
+                    {user?.username?.charAt(0).toUpperCase()}
+                  </div>
                 </div>
               </div>
-            </div>
-          </nav>
-        )}
+            </nav>
+          )}
 
-        {/* Routes */}
-        <Routes>
-          {!user.isAdmin && (
-            <>
-              <Route path="/" element={<Home user={user} />} />
-              <Route path="/aboutus" element={<AboutUs />} />
+          {/* Routes */}
+          <Routes>
+            {!user.isAdmin && (
+              <>
+                <Route path="/" element={<Home user={user} />} />
+                <Route path="/aboutus" element={<AboutUs />} />
+                <Route
+                  path="/analyzepost"
+                  element={
+                    <ProtectedRoute user={user}>
+                      <CompleteBackend />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/job-result" element={<JobResult />} />
+              </>
+            )}
+
+            {user.isAdmin && (
               <Route
-                path="/analyzepost"
-                element={
-                  <ProtectedRoute user={user}>
-                    <CompleteBackend />
-                  </ProtectedRoute>
-                }
+                path="/admin"
+                element={<AdminPanel handleLogout={handleLogout} />}
               />
-              <Route path="/job-result" element={<JobResult />} />
-            </>
-          )}
+            )}
 
-          {user.isAdmin && (
+            {/* Default route based on role */}
             <Route
-              path="/admin"
-              element={<AdminPanel handleLogout={handleLogout} />}
+              path="*"
+              element={<Navigate to={user.isAdmin ? "/admin" : "/"} />}
             />
-          )}
-
-          {/* Default route based on role */}
-          <Route path="*" element={<Navigate to={user.isAdmin ? "/admin" : "/"} />} />
+          </Routes>
+        </>
+      ) : (
+        <Routes>
+          <Route path="/" element={<Login setUser={setUser} />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-      </>
-    ) : (
-      <Routes>
-        <Route path="/" element={<Login setUser={setUser} />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    )}
-  </BrowserRouter>
-);
+      )}
+    </BrowserRouter>
+  );
 }

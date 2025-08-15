@@ -241,7 +241,7 @@
 //             transform: translate(0px, 0px) scale(1);
 //           }
 //         }
-        
+
 //         @keyframes float {
 //           0%, 100% {
 //             transform: translateY(0px);
@@ -271,25 +271,25 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Shield, Mail, Lock, Eye, EyeOff, UserPlus, LogIn, Sparkles } from "lucide-react";
+import {
+  User,
+  Shield,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  UserPlus,
+  LogIn,
+  Sparkles,
+} from "lucide-react";
+
+// Base API URL depending on environment
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://fraudulent-job-updated.onrender.com"
+    : "http://localhost:5003";
 
 export default function Login({ setUser }) {
   const [isAdminLogin, setIsAdminLogin] = useState(false);
@@ -303,7 +303,7 @@ export default function Login({ setUser }) {
     name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   const navigate = useNavigate();
@@ -325,41 +325,41 @@ export default function Login({ setUser }) {
           throw new Error("Passwords don't match");
         }
 
-        const res = await fetch("http://localhost:5003/api/register", {
+        const res = await fetch(`${API_BASE_URL}/api/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form)
+          body: JSON.stringify(form),
         });
-        
+
         const data = await res.json();
-        
+
         if (!res.ok) {
           throw new Error(data.message || "Registration failed");
         }
-        
+
         // Show success and switch to login
         setIsSignup(false);
         setForm({ ...form, password: "", confirmPassword: "" });
         setError(""); // Clear any previous errors
       } else {
         // login
-        const res = await fetch("http://localhost:5003/api/login", {
+        const res = await fetch(`${API_BASE_URL}/api/login`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email: form.email,
             password: form.password,
-            isAdminLogin
-          })
+            isAdminLogin,
+          }),
         });
-        
+
         const data = await res.json();
-        
+
         if (!res.ok) {
           throw new Error(data.message || "Login failed");
         }
-        
+
         // Success - set user and navigate
         setUser(data.user);
         navigate(data.user.isAdmin ? "/admin" : "/user-home");
@@ -373,7 +373,18 @@ export default function Login({ setUser }) {
   };
 
   return (
-    <div className="w-screen h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden" style={{margin: 0, padding: 0, position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}>
+    <div
+      className="w-screen h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden"
+      style={{
+        margin: 0,
+        padding: 0,
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+      }}
+    >
       {/* Animated background elements */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
         <div className="absolute -top-40 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
@@ -393,7 +404,7 @@ export default function Login({ setUser }) {
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
               animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${3 + Math.random() * 4}s`
+              animationDuration: `${3 + Math.random() * 4}s`,
             }}
           />
         ))}
@@ -408,7 +419,11 @@ export default function Login({ setUser }) {
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-              {isSignup ? "Create Account" : isAdminLogin ? "Admin Portal" : "Welcome Back"}
+              {isSignup
+                ? "Create Account"
+                : isAdminLogin
+                ? "Admin Portal"
+                : "Welcome Back"}
             </h2>
             <p className="text-white/70 mt-1 text-sm">
               {isSignup ? "Join our amazing platform" : "Sign in to continue"}
@@ -418,8 +433,18 @@ export default function Login({ setUser }) {
           {/* Error message */}
           {error && (
             <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm flex items-center">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               {error}
             </div>
@@ -428,22 +453,30 @@ export default function Login({ setUser }) {
           {/* Mode selection buttons */}
           <div className="flex gap-1 mb-5 p-1 bg-white/5 rounded-xl backdrop-blur-sm">
             <button
-              onClick={() => { setIsAdminLogin(false); setIsSignup(false); setError(""); }}
+              onClick={() => {
+                setIsAdminLogin(false);
+                setIsSignup(false);
+                setError("");
+              }}
               className={`flex-1 flex items-center justify-center gap-1 py-2 px-3 rounded-lg font-medium text-sm transition-all duration-300 ${
                 !isAdminLogin && !isSignup
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transform scale-105'
-                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transform scale-105"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
               }`}
             >
               <User className="w-3 h-3" />
               User Login
             </button>
             <button
-              onClick={() => { setIsAdminLogin(true); setIsSignup(false); setError(""); }}
+              onClick={() => {
+                setIsAdminLogin(true);
+                setIsSignup(false);
+                setError("");
+              }}
               className={`flex-1 flex items-center justify-center gap-1 py-2 px-3 rounded-lg font-medium text-sm transition-all duration-300 ${
                 isAdminLogin
-                  ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg transform scale-105'
-                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  ? "bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg transform scale-105"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
               }`}
             >
               <Shield className="w-3 h-3" />
@@ -455,10 +488,15 @@ export default function Login({ setUser }) {
           {!isAdminLogin && (
             <div className="text-center mb-5">
               <button
-                onClick={() => { setIsSignup(!isSignup); setError(""); }}
+                onClick={() => {
+                  setIsSignup(!isSignup);
+                  setError("");
+                }}
                 className="text-purple-400 hover:text-purple-300 underline decoration-purple-400/50 hover:decoration-purple-300 transition-colors duration-300 text-sm"
               >
-                {isSignup ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+                {isSignup
+                  ? "Already have an account? Sign In"
+                  : "Don't have an account? Sign Up"}
               </button>
             </div>
           )}
@@ -518,7 +556,11 @@ export default function Login({ setUser }) {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-white/50 hover:text-white transition-colors duration-300"
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             </div>
 
@@ -543,7 +585,11 @@ export default function Login({ setUser }) {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-white/50 hover:text-white transition-colors duration-300"
                 >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
             )}
@@ -558,9 +604,25 @@ export default function Login({ setUser }) {
             >
               {isLoading ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Processing...
                 </>
@@ -602,9 +664,10 @@ export default function Login({ setUser }) {
             transform: translate(0px, 0px) scale(1);
           }
         }
-        
+
         @keyframes float {
-          0%, 100% {
+          0%,
+          100% {
             transform: translateY(0px);
           }
           50% {
