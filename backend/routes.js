@@ -3,7 +3,6 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("./usermodel");
-
 const router = express.Router();
 // Add at the top with other requires
 const JobAnalysis = require("./jobModel");
